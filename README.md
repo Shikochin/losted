@@ -1,4 +1,4 @@
-# ✒️ 文摘
+# Losted
 Store some of my favorite words.
 
 Inspired by [Dark495.me](https://dark495.me)

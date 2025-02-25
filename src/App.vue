@@ -87,7 +87,7 @@ onBeforeUnmount(() => {
 <template>
     <main>
         <header>
-            <a href="https://github.com/Shikochin/excerpt.shikoch.in"><i class="fa-light fa-pen-nib"></i> 文摘</a>
+            <a href="https://github.com/Shikochin/losted"><i class="fa-light fa-pen-nib"></i> Losted</a>
         </header>
         <ExcerptDisplay :excerpt="excerpt" />
         <ExcerptController :index="index" :total="excerpts.length" @navigate="replaceToSpecifiedExcerpt"
