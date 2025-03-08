@@ -7,7 +7,7 @@ const commitID = ref('');
 // Function to fetch the latest commit ID from the GitHub API
 const fetchLatestCommitID = async () => {
     try {
-        const response = await fetch('https://api.github.com/repos/Shikochin/excerpt.shikoch.in/commits');
+        const response = await fetch('https://api.github.com/repos/Shikochin/losted/commits');
         const data = await response.json();
         if (data && data.length > 0) {
             commitID.value = data[0].sha.substring(0, 7);
@@ -24,8 +24,8 @@ onMounted(() => {
 
 <template>
     <span v-if="commitID">
-        <a :href="`https://github.com/Shikochin/excerpt.shikoch.in/commit/${commitID}`" target="_blank"
-            rel="noopener noreferrer">{{ commitID }}</a>
+        <a :href="`https://github.com/Shikochin/losted/commit/${commitID}`" target="_blank" rel="noopener noreferrer">{{
+        commitID }}</a>
     </span>
     <span v-else>Loading...</span>
 </template>
