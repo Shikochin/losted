@@ -24,9 +24,25 @@ function getRandomExcerpt(): number {
 
 // Update the excerpt to the specified index
 function replaceToSpecifiedExcerpt(i: number) {
-    router.push({ query: { index: i } });
-    index.value = i;
-    excerpt.value = excerpts[i];
+    if (i !== 52) {
+        router.push({ query: { index: i } });
+        index.value = i;
+        excerpt.value = excerpts[i];
+
+    } else {
+        switch (i) {
+            case 52:
+                router.push({ query: { index: 52 } });
+                excerpt.value = {
+                    content: [
+                        '贝莎漫游在大街上，坐在路边，阳光透过街边的玻璃窗洒在她的脸上。她的手指轻轻抚摸着路缝里钻出来的花朵，仿佛在感受它们的生命力。她的心中充满了对生活的热爱，对未来的憧憬。',
+                    ],
+                    author: '？？？'
+                }
+                break;
+        }
+
+    }
 }
 
 // Refresh the current excerpt with a new random one

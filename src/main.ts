@@ -4,5 +4,5 @@ import router from './router';
 import './assets/style/style.css';
 
 const app = createApp(App);
-app.use(router as any);
+app.use(router);
 app.mount('#app');
