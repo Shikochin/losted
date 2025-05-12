@@ -24,24 +24,34 @@ function getRandomExcerpt(): number {
 
 // Update the excerpt to the specified index
 function replaceToSpecifiedExcerpt(i: number) {
-    if (i !== 52) {
+    if (i < excerpts.length) {
         router.push({ query: { index: i } });
         index.value = i;
         excerpt.value = excerpts[i];
 
-    } else {
-        switch (i) {
-            case 52:
-                router.push({ query: { index: 52 } });
-                excerpt.value = {
-                    content: [
-                        '贝莎漫游在大街上，坐在路边，阳光透过街边的玻璃窗洒在她的脸上。她的手指轻轻抚摸着路缝里钻出来的花朵，仿佛在感受它们的生命力。她的心中充满了对生活的热爱，对未来的憧憬。',
-                    ],
-                    author: '？？？'
-                }
-                break;
-        }
+    } else if (i === 52) {
+        router.push({ query: { index: 52 } });
+        excerpt.value = {
+            content: [
+                '贝莎漫游在大街上，坐在路边，阳光透过街边的玻璃窗洒在她的脸上。她的手指轻轻抚摸着路缝里钻出来的花朵，仿佛在感受它们的生命力。她的心中充满了对生活的热爱，对未来的憧憬。',
+            ],
+            author: '52 号记录'
+        };
+    } else if (i === 42) {
+        router.push({ query: { index: 42 } });
+        excerpt.value = {
+            content: [
+                '“老爷，这些药真的可以吗，这些药还未经批准啊，您是从哪里弄来的？”',
+                '“轮不到你问这些问题，你也知道，最近爱丽丝的睡眠质量越来越差了，再不进行干预，恐怕她每天都会如此浑浑噩噩了。”',
+                '“可这不是因为家族......”',
+                '“你他妈少给我废话！赫尔，你知道我他妈有多努力吗？！”',
+                '“工厂弄的外面乌烟瘴气的，我们也很难办啊......”',
+                '“可是......”',
+                '“......我明白了。”'
 
+            ],
+            author: '42 号记录'
+        };
     }
 }
 
