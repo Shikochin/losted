@@ -53,6 +53,17 @@ function replaceToSpecifiedExcerpt(i: number) {
             author: '42 号记录'
         };
     }
+    else if (i === 46) {
+        router.push({ query: { index: 46 } });
+        excerpt.value = {
+            content: [
+                '“蔚蓝色星球下，阳光多么灿烂，亮的人们都睁不开眼。”',
+                '“只是有些人可以晒到阳光，有些人的生命只能在灯光下度过，他们望向窗外，却只能看到‘努力工作，不怕牺牲’的标语。”',
+                '“多么可笑，人这一生的命运居然不会捏在自己手中，任凭你怎么挣扎，却终究逃不出这个牢笼。”'
+            ],
+            author: '@kencu11en'
+        };
+    }
 }
 
 // Refresh the current excerpt with a new random one
