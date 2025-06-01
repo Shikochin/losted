@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import excerpts from './assets/data/excerpts.json';
 import ExcerptDisplay from './components/ExcerptDisplay.vue';
 import ExcerptController from './components/ExcerptController.vue';
+import Giscus from '@giscus/vue';
 import CommitID from './components/CommitID.vue';
 
 // Router instance
@@ -72,7 +73,7 @@ function replaceToSpecifiedExcerpt(i: number) {
 
 // Refresh the current excerpt with a new random one
 function refresh() {
-        index.value = getRandomExcerpt();
+    index.value = getRandomExcerpt();
 }
 
 // Handle key up events for navigation and refresh
@@ -115,6 +116,9 @@ onBeforeUnmount(() => {
         <ExcerptDisplay :excerpt="excerpt" />
         <ExcerptController :index="index" :total="excerpts.length" @navigate="replaceToSpecifiedExcerpt"
             @refresh="refresh" />
+        <Giscus repo="Shikochin/losted" repo-id="R_kgDOLG1jNA" category="Comments" category-id="DIC_kwDOLG1jNM4CpT6k"
+            mapping="specific" :term="index.toString()" strict="1" reactions-enabled="1" emit-metadata="1"
+            input-position="top" theme="fro" lang="en" loading="lazy"></Giscus>
         <footer>
             Commit ID:
             <CommitID />
