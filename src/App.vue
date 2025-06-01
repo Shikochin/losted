@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { onMounted, onBeforeUnmount, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import excerpts from './assets/data/excerpts.json';
 import ExcerptDisplay from './components/ExcerptDisplay.vue';
@@ -11,35 +11,17 @@ const router = useRouter();
 
 // State variables
 const index = ref(0); // Current excerpt index
-const excerpt = ref<{ content: string[]; author: string }>({ content: [], author: '' }); // Current excerpt
-
-// Get a random excerpt index that is not the same as the current one
-function getRandomExcerpt(): number {
-    let _index: number;
-    do {
-        _index = Math.floor(Math.random() * excerpts.length);
-    } while (_index === index.value);
-    return _index;
-}
-
-// Update the excerpt to the specified index
-function replaceToSpecifiedExcerpt(i: number) {
-    if (i < excerpts.length) {
-        router.push({ query: { index: i } });
-        index.value = i;
-        excerpt.value = excerpts[i];
-
-    } else if (i === 52) {
-        router.push({ query: { index: 52 } });
-        excerpt.value = {
+const excerpt = computed<{ content: string[]; author: string }>(() => {
+    const i = index.value
+    if (i === 52) {
+        return {
             content: [
                 '贝莎漫游在大街上，坐在路边，阳光透过街边的玻璃窗洒在她的脸上。她的手指轻轻抚摸着路缝里钻出来的花朵，仿佛在感受它们的生命力。她的心中充满了对生活的热爱，对未来的憧憬。',
             ],
             author: '52 号记录'
         };
     } else if (i === 42) {
-        router.push({ query: { index: 42 } });
-        excerpt.value = {
+        return {
             content: [
                 '“老爷，这些药真的可以吗，这些药还未经批准啊，您是从哪里弄来的？”',
                 '“轮不到你问这些问题，你也知道，最近爱丽丝的睡眠质量越来越差了，再不进行干预，恐怕她每天都会如此浑浑噩噩了。”',
@@ -52,10 +34,8 @@ function replaceToSpecifiedExcerpt(i: number) {
             ],
             author: '42 号记录'
         };
-    }
-    else if (i === 46) {
-        router.push({ query: { index: 46 } });
-        excerpt.value = {
+    } else if (i === 46) {
+        return {
             content: [
                 '“蔚蓝色星球下，阳光多么灿烂，亮的人们都睁不开眼。”',
                 '“只是有些人可以晒到阳光，有些人的生命只能在灯光下度过，他们望向窗外，却只能看到‘努力工作，不怕牺牲’的标语。”',
@@ -64,34 +44,35 @@ function replaceToSpecifiedExcerpt(i: number) {
             author: '@kencu11en'
         };
     }
+    if (i < excerpts.length) {
+        return excerpts[i];
+    }
+})
+
+// Get a random excerpt index that is not the same as the current one
+function getRandomExcerpt(): number {
+    let _index: number;
+    do {
+        _index = Math.floor(Math.random() * excerpts.length);
+    } while (_index === index.value);
+    return _index;
+}
+
+// Update the excerpt to the specified index
+function replaceToSpecifiedExcerpt(i: number) {
+    const _index = i.toString()
+    const param = new URLSearchParams(location.search)
+    if (param.get("index") === _index) {
+        return
+    }
+    param.set("index", _index)
+    router.push({ query: Object.fromEntries(param.entries()) });
+    index.value = i
 }
 
 // Refresh the current excerpt with a new random one
 function refresh() {
-    const _index = getRandomExcerpt();
-    replaceToSpecifiedExcerpt(_index);
-}
-
-// Extract the "index" parameter value from the URL query string
-function extractIndexParam(str: string): string {
-    const match = str.match(/index=\w+/);
-    return match ? match[0] : '';
-}
-
-// Initialize the excerpt based on the current state or storage
-function initExcerpt() {
-    const currentStateIndex = extractIndexParam(history.state.current);
-    setInitialIndex(currentStateIndex);
-    replaceToSpecifiedExcerpt(index.value);
-}
-
-// Set the initial index for the excerpt
-function setInitialIndex(stateIndex: string) {
-    if (stateIndex) {
-        index.value = parseInt(stateIndex.split('=')[1]);
-    } else {
         index.value = getRandomExcerpt();
-    }
 }
 
 // Handle key up events for navigation and refresh
@@ -106,13 +87,18 @@ function handleKeyUp(e: KeyboardEvent) {
         case 'r':
             refresh();
             break;
-        default:
-            break;
     }
 }
 
 onMounted(() => {
-    initExcerpt();
+    const currentStateIndex = parseInt(new URLSearchParams(location.search).get("index"))
+    if (!isNaN(currentStateIndex)) {
+        index.value = currentStateIndex;
+    } else {
+        index.value = getRandomExcerpt();
+    }
+    replaceToSpecifiedExcerpt(index.value);
+
     document.addEventListener('keyup', handleKeyUp); // Register key up event
 });
 
