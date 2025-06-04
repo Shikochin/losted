@@ -44,11 +44,16 @@ const excerpt = computed<{ content: string[]; author: string }>(() => {
             ],
             author: '@kencu11en'
         };
+    } else if (i === 36) {
+        return {
+            content: ['"I swear you won\'t lose anymore."'],
+            author: 'Mysteries'
+        };
     }
     if (i < excerpts.length) {
         return excerpts[i];
     }
-})
+});
 
 // Get a random excerpt index that is not the same as the current one
 function getRandomExcerpt(): number {
