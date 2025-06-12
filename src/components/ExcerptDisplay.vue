@@ -3,7 +3,11 @@
         <p id="content">
             <span v-for="(sentence, idx) in excerpt.content" :key="idx">{{ sentence }}<br /></span>
         </p>
-        <p id="author">—— {{ excerpt.author }}</p>
+        <cite id="copyright">
+            ——
+            <span v-if="!excerpt.source">{{ excerpt.author }}</span>
+            <a v-if="excerpt.source" :href="excerpt.source" id="source">{{ excerpt.author }}</a>
+        </cite>
     </section>
 </template>
 
@@ -12,6 +16,7 @@ const props = defineProps<{
     excerpt: {
         content: string[];
         author: string;
+        source?: string;
     };
 }>();
 </script>
@@ -26,8 +31,13 @@ const props = defineProps<{
     font-size: 4vw;
 }
 
-#author {
+#copyright {
     font-size: 3vw;
+
+}
+
+#source {
+    text-decoration-line: underline;
 }
 
 @media (max-width: 600px) {
@@ -35,7 +45,7 @@ const props = defineProps<{
         font-size: 8vw;
     }
 
-    #author {
+    #copyright {
         font-size: 6vw;
     }
 }
@@ -45,7 +55,7 @@ const props = defineProps<{
         font-size: 3vw;
     }
 
-    #author {
+    #copyright {
         font-size: 2vw;
     }
 }

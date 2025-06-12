@@ -96,6 +96,29 @@ function handleKeyUp(e: KeyboardEvent) {
     }
 }
 
+
+// idontknowwhatisthis
+const prefaceEl = ref<HTMLElement | null>(null);
+
+function scalePrefaceText() {
+    const el = prefaceEl.value;
+    if (!el || !el.parentElement) return;
+
+    // reset transform
+    el.style.transform = 'scaleX(1)';
+    const parentWidth = el.parentElement.clientWidth;
+    const actualWidth = el.scrollWidth;
+
+    if (actualWidth > 0) {
+        const scaleX = parentWidth / actualWidth;
+        el.style.transform = `scaleX(${scaleX})`;
+    }
+}
+
+let resizeObserver: ResizeObserver;
+
+
+
 onMounted(() => {
     const currentStateIndex = parseInt(new URLSearchParams(location.search).get("index"))
     if (!isNaN(currentStateIndex)) {
@@ -106,17 +129,34 @@ onMounted(() => {
     replaceToSpecifiedExcerpt(index.value);
 
     document.addEventListener('keyup', handleKeyUp); // Register key up event
+
+    // preface text scaling
+    scalePrefaceText();
+
+    resizeObserver = new ResizeObserver(() => {
+        scalePrefaceText();
+    });
+
+    if (prefaceEl.value?.parentElement) {
+        resizeObserver.observe(prefaceEl.value.parentElement);
+    }
+
+    // end
 });
 
 onBeforeUnmount(() => {
     document.removeEventListener('keyup', handleKeyUp); // Clean up the event listener
+
+    // disconnect the resize observer
+    resizeObserver?.disconnect();
 });
 </script>
 
 <template>
     <main>
         <header>
-            <a href="https://github.com/Shikochin/losted"><i class="fa-light fa-pen-nib"></i> Losted</a>
+            <a href="https://github.com/Shikochin/losted" class="title"><i class="fa-light fa-pen-nib"></i> Losted</a>
+            <span id="preface" ref="prefaceEl">我的爱，我的认同与我一切的不能忘</span>
         </header>
         <ExcerptDisplay :excerpt="excerpt" />
         <ExcerptController :index="index" :total="excerpts.length" @navigate="replaceToSpecifiedExcerpt"
@@ -137,21 +177,35 @@ onBeforeUnmount(() => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Noto+Serif+SC&display=swap');
 
-a {
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* 或 center 看你希望对齐方式 */
+    font-size: 3vw;
+    margin-bottom: 8vh;
+}
+
+.title {
+    display: inline-block;
     text-decoration: none;
     color: black;
-    cursor: pointer;
-    user-select: none;
+    font-size: 1em;
+    margin-bottom: 0.5em;
+}
+
+#preface {
+    font-size: 20px;
+    white-space: nowrap;
+    display: inline-block;
+    transform-origin: left center;
+    line-height: 0;
 }
 
 main {
     font-family: 'Instrument Serif', 'Noto Serif SC', serif;
 }
 
-header {
-    font-size: 3vw;
-    margin-bottom: 8vh;
-}
 
 footer {
     user-select: none;
