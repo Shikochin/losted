@@ -1,5 +1,5 @@
 # Losted
-Store some of my favorite words.
+我的爱，我的认同与我一切的不能忘。
 
 Inspired by [Dark495.me](https://dark495.me)
 
