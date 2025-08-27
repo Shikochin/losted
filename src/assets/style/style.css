@@ -36,7 +36,7 @@ a {
   font-family: 'Font Awesome 6 Pro';
   font-style: normal;
   font-weight: 100;
-  font-display: block;
+  font-display: swap;
   src: url('../fonts/fa-thin-100_compressed.woff2') format('woff2');
 }
 .fa-thin {
@@ -51,7 +51,7 @@ a {
   font-family: 'Font Awesome 6 Pro';
   font-style: normal;
   font-weight: 300;
-  font-display: block;
+  font-display: swap;
   src: url('../fonts/fa-light-300_compressed.woff2') format('woff2');
 }
 .fa-light {
