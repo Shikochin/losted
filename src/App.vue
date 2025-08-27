@@ -95,13 +95,8 @@ const specialExcerptIndices = [52, 42, 46, 36].sort((a, b) => a - b);
 // Get a random excerpt index that is not the same as the current one
 function getRandomExcerpt(): number {
     if (excerpts.value.length === 0) return 0;
-
-    // Create array of all valid indices (regular excerpts + special excerpts)
-    const regularIndices = Array.from({ length: excerpts.value.length }, (_, i) => i);
-    const allValidIndices = [...regularIndices, ...specialExcerptIndices];
-
     // Filter out current index
-    const availableIndices = allValidIndices.filter(i => i !== index.value);
+    const availableIndices = getAllValidIndices().filter(i => i !== index.value);
 
     // Return random index from available indices
     return availableIndices[Math.floor(Math.random() * availableIndices.length)];
@@ -121,7 +116,7 @@ function replaceToSpecifiedExcerpt(i: number) {
 
 // Refresh the current excerpt with a new random one
 function refresh() {
-    index.value = getRandomExcerpt();
+    replaceToSpecifiedExcerpt(getRandomExcerpt());
 }
 
 // Handle key up events for navigation and refresh
@@ -210,17 +205,13 @@ onMounted(async () => {
     const currentStateIndex = parseInt(new URLSearchParams(location.search).get("index") || '');
 
     // Check if it's a valid index (either in excerpts array or a special excerpt)
-    const specialExcerptIndices = [52, 42, 46, 36];
-    const isValidIndex = !isNaN(currentStateIndex) &&
-        (currentStateIndex < excerpts.value.length || specialExcerptIndices.includes(currentStateIndex));
+    const isValidIndex = !isNaN(currentStateIndex) && getAllValidIndices().includes(currentStateIndex);
 
     if (isValidIndex) {
-        index.value = currentStateIndex;
+        replaceToSpecifiedExcerpt(currentStateIndex);
         // URL already has the correct index, no need to call replaceToSpecifiedExcerpt
     } else {
-        index.value = getRandomExcerpt();
-        // Update URL to show the random excerpt
-        replaceToSpecifiedExcerpt(index.value);
+        refresh();
     }
 
     document.addEventListener('keyup', handleKeyUp); // Register key up event
@@ -255,9 +246,7 @@ onBeforeUnmount(() => {
         </header>
         <ExcerptDisplay :excerpt="excerpt" />
         <ExcerptController :index="index" :total="excerptsLength" :can-navigate-left="canNavigateLeft"
-            :can-navigate-right="canNavigateRight" @navigate="replaceToSpecifiedExcerpt"
-            @navigate-left="navigateToNearestExcerpt('left')" @navigate-right="navigateToNearestExcerpt('right')"
-            @refresh="refresh" />
+            :can-navigate-right="canNavigateRight" @navigate="navigateToNearestExcerpt" @refresh="refresh" />
         <Giscus repo="Shikochin/losted" repo-id="R_kgDOLG1jNA" category="Comments" category-id="DIC_kwDOLG1jNM4CpT6k"
             mapping="specific" :term="index.toString()" strict="1" reactions-enabled="1" emit-metadata="1"
             input-position="top" theme="fro" lang="en" loading="lazy"></Giscus>
