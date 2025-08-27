@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 // State variable to store the latest commit ID
 const commitID = ref('');
@@ -17,13 +17,36 @@ const fetchLatestCommitID = async () => {
     }
 };
 
+const rootEl = ref<HTMLElement | null>(null);
+let observer: IntersectionObserver | null = null;
+
 onMounted(() => {
-    fetchLatestCommitID();
+    const onIntersect: IntersectionObserverCallback = (entries, obs) => {
+        for (const entry of entries) {
+            if (entry.isIntersecting) {
+                fetchLatestCommitID();
+                obs.disconnect();
+                observer = null;
+                break;
+            }
+        }
+    };
+    observer = new IntersectionObserver(onIntersect, { rootMargin: '150px 0px', threshold: 0 });
+    if (rootEl.value) {
+        observer.observe(rootEl.value);
+    } else {
+        // Fallback
+        fetchLatestCommitID();
+    }
+});
+
+onBeforeUnmount(() => {
+    observer?.disconnect();
 });
 </script>
 
 <template>
-    <span v-if="commitID">
+    <span ref="rootEl" v-if="commitID">
         <a :href="`https://github.com/Shikochin/losted/commit/${commitID}`" target="_blank" rel="noopener noreferrer">{{
         commitID }}</a>
     </span>

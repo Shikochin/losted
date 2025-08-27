@@ -1,14 +1,25 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { onMounted, onBeforeUnmount, ref, computed, defineAsyncComponent } from 'vue';
 import excerpts from './assets/data/excerpts.json';
 import ExcerptDisplay from './components/ExcerptDisplay.vue';
 import ExcerptController from './components/ExcerptController.vue';
-import Giscus from '@giscus/vue';
+// Lazy Giscus
+const GiscusAsync = defineAsyncComponent(() => import('@giscus/vue'));
+const showGiscus = ref(false);
+const giscusEl = ref<HTMLElement | null>(null);
 import CommitID from './components/CommitID.vue';
 
-// Router instance
-const router = useRouter();
+// History API routing (remove vue-router)
+function pushIndexToUrl(i: number, replace: boolean = false) {
+    const param = new URLSearchParams(location.search);
+    param.set("index", String(i));
+    const newUrl = `${location.pathname}?${param.toString()}`;
+    if (replace) {
+        history.replaceState(null, '', newUrl);
+    } else {
+        history.pushState(null, '', newUrl);
+    }
+}
 
 // State variables
 const index = ref(0); // Current excerpt index
@@ -66,14 +77,13 @@ function getRandomExcerpt(): number {
 
 // Update the excerpt to the specified index
 function replaceToSpecifiedExcerpt(i: number) {
-    const _index = i.toString()
-    const param = new URLSearchParams(location.search)
+    const _index = String(i);
+    const param = new URLSearchParams(location.search);
     if (param.get("index") === _index) {
-        return
+        return;
     }
-    param.set("index", _index)
-    router.push({ query: Object.fromEntries(param.entries()) });
-    index.value = i
+    pushIndexToUrl(i);
+    index.value = i;
 }
 
 // Refresh the current excerpt with a new random one
@@ -126,7 +136,8 @@ onMounted(() => {
     } else {
         index.value = getRandomExcerpt();
     }
-    replaceToSpecifiedExcerpt(index.value);
+    // Initialize URL without adding history entries
+    pushIndexToUrl(index.value, true);
 
     document.addEventListener('keyup', handleKeyUp); // Register key up event
 
@@ -141,6 +152,21 @@ onMounted(() => {
         resizeObserver.observe(prefaceEl.value.parentElement);
     }
 
+    // Lazy-load Giscus when it enters viewport
+    const onIntersect: IntersectionObserverCallback = (entries, observer) => {
+        for (const entry of entries) {
+            if (entry.isIntersecting) {
+                showGiscus.value = true;
+                observer.disconnect();
+                break;
+            }
+        }
+    };
+    const giscusObserver = new IntersectionObserver(onIntersect, { rootMargin: '200px 0px', threshold: 0 });
+    if (giscusEl.value) {
+        giscusObserver.observe(giscusEl.value);
+    }
+
     // end
 });
 
@@ -149,6 +175,14 @@ onBeforeUnmount(() => {
 
     // disconnect the resize observer
     resizeObserver?.disconnect();
+});
+
+// Handle back/forward navigation
+window.addEventListener('popstate', () => {
+    const currentStateIndex = parseInt(new URLSearchParams(location.search).get("index"));
+    if (!isNaN(currentStateIndex)) {
+        index.value = currentStateIndex;
+    }
 });
 </script>
 
@@ -161,9 +195,12 @@ onBeforeUnmount(() => {
         <ExcerptDisplay :excerpt="excerpt" />
         <ExcerptController :index="index" :total="excerpts.length" @navigate="replaceToSpecifiedExcerpt"
             @refresh="refresh" />
-        <Giscus repo="Shikochin/losted" repo-id="R_kgDOLG1jNA" category="Comments" category-id="DIC_kwDOLG1jNM4CpT6k"
-            mapping="specific" :term="index.toString()" strict="1" reactions-enabled="1" emit-metadata="1"
-            input-position="top" theme="fro" lang="en" loading="lazy"></Giscus>
+        <div ref="giscusEl">
+            <component :is="GiscusAsync" v-if="showGiscus"
+                repo="Shikochin/losted" repo-id="R_kgDOLG1jNA" category="Comments" category-id="DIC_kwDOLG1jNM4CpT6k"
+                mapping="specific" :term="index.toString()" strict="1" reactions-enabled="1" emit-metadata="1"
+                input-position="top" theme="fro" lang="en" />
+        </div>
         <footer>
             Commit ID:
             <CommitID />

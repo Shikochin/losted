@@ -30,21 +30,6 @@ a {
 :root,
 :host {
   --fa-style-family-classic: 'Font Awesome 6 Pro';
-  --fa-font-thin: normal 100 1em/1 'Font Awesome 6 Pro';
-}
-@font-face {
-  font-family: 'Font Awesome 6 Pro';
-  font-style: normal;
-  font-weight: 100;
-  font-display: block;
-  src: url('../fonts/fa-thin-100_compressed.woff2') format('woff2');
-}
-.fa-thin {
-  font-weight: 100;
-}
-:root,
-:host {
-  --fa-style-family-classic: 'Font Awesome 6 Pro';
   --fa-font-light: normal 300 1em/1 'Font Awesome 6 Pro';
 }
 @font-face {
@@ -55,10 +40,6 @@ a {
   src: url('../fonts/fa-light-300_compressed.woff2') format('woff2');
 }
 .fa-light {
-  font-weight: 300;
-}
-.fa-thin,
-.fa-light {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   display: var(--fa-display, inline-block);
@@ -67,8 +48,7 @@ a {
   line-height: 1;
   text-rendering: auto;
 }
-.fa-light,
-.fa-thin {
+.fa-light {
   font-family: 'Font Awesome 6 Pro';
 }
 .fa-arrow-left-long::before {
