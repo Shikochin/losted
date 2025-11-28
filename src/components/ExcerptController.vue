@@ -42,7 +42,6 @@ a {
     opacity: 0.5;
     transition: opacity 0.3s;
     text-decoration: none;
-    color: black;
     cursor: pointer;
     user-select: none;
 }

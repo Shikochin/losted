@@ -25,7 +25,7 @@ onMounted(() => {
 <template>
     <span v-if="commitID">
         <a :href="`https://github.com/Shikochin/losted/commit/${commitID}`" target="_blank" rel="noopener noreferrer">{{
-        commitID }}</a>
+            commitID }}</a>
     </span>
     <span v-else>Loading...</span>
 </template>
@@ -33,7 +33,6 @@ onMounted(() => {
 <style scoped>
 a {
     text-decoration: underline;
-    color: black;
     cursor: pointer;
     user-select: none;
 }

@@ -1,18 +1,10 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, computed, defineAsyncComponent } from 'vue';
+import { onMounted, onBeforeUnmount, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import ExcerptDisplay from './components/ExcerptDisplay.vue';
 import ExcerptController from './components/ExcerptController.vue';
 import CommitID from './components/CommitID.vue';
-
-// Lazy load Giscus component
-const Giscus = defineAsyncComponent({
-    loader: () => import('@giscus/vue').then(module => module.default),
-    delay: 200,
-    timeout: 10000,
-    errorComponent: () => '<div>Comments failed to load</div>',
-    loadingComponent: () => '<div>Loading comments...</div>'
-});
+import Giscus from '@giscus/vue'
 
 // Lazy load excerpts data
 const excerpts = ref<Array<{ content: string[]; author: string; source?: string }>>([]);
@@ -247,21 +239,25 @@ onBeforeUnmount(() => {
         <ExcerptDisplay :excerpt="excerpt" />
         <ExcerptController :index="index" :total="excerptsLength" :can-navigate-left="canNavigateLeft"
             :can-navigate-right="canNavigateRight" @navigate="navigateToNearestExcerpt" @refresh="refresh" />
-        <Giscus repo="Shikochin/losted" repo-id="R_kgDOLG1jNA" category="Comments" category-id="DIC_kwDOLG1jNM4CpT6k"
-            mapping="specific" :term="index.toString()" strict="1" reactions-enabled="1" emit-metadata="1"
-            input-position="top" theme="fro" lang="en" loading="lazy"></Giscus>
+        <Giscus class="giscus" repo="Shikochin/losted" repo-id="R_kgDOLG1jNA" category="Comments"
+            category-id="DIC_kwDOLG1jNM4CpT6k" mapping="specific" :term="index.toString()" strict="1"
+            reactions-enabled="1" emit-metadata="1" input-position="top" theme="fro" lang="en" loading="lazy"></Giscus>
         <footer>
             Commit ID:
             <CommitID />
             <br />
             Excerpts are attributed to the author<br />
-            2024-present by <a href="https://github.com/Shikochin" target="_blank">@Shikochin</a>
+            2024-present by <a id="author" href="https://github.com/Shikochin" target="_blank">@Shikochin</a>
         </footer>
     </main>
 </template>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:wght@400&family=Noto+Serif+SC:wght@400&display=swap');
+
+#author {
+    text-decoration: underline;
+}
 
 header {
     display: flex;
@@ -274,7 +270,6 @@ header {
 .title {
     display: inline-block;
     text-decoration: none;
-    color: black;
     font-size: 1em;
     margin-bottom: 0.5em;
 }

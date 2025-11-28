@@ -4,22 +4,23 @@ body {
   justify-content: center;
   margin: 0;
 }
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-  body {
-    filter: invert(1);
-    background-color: black;
-  }
-  giscus-widget {
-    filter: invert(1);
-  }
-}
 
 a {
   text-decoration: none;
   color: black;
   cursor: pointer;
   user-select: none;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: black;
+    color: white;
+  }
+  a {
+    color: white;
+  }
 }
 
 /* Fontawesome */
